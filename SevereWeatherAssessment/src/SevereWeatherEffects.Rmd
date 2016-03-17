@@ -3,15 +3,17 @@ title: "US Severe Weather Health and Economic Consequences"
 author: "Leila Tite"
 date: "March 15, 2016"
 output: html_document
+#        keep_md: TRUE
 ---
-```{r, echo=TRUE}
+```{r, echo=FALSE}
+setwd("/home/jsb191/Coursera/ReproducibleResearch/RepData_PeerAssessment2/SevereWeatherAssessment")
 library('ProjectTemplate')
 	load.project()
 ```
 
 ### Basic settings
 ```{r}
-knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='graphs/',
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='graphs/', base.url='reports/',
                       echo=TRUE, warning=FALSE, message=FALSE)
 
 ```
@@ -24,10 +26,10 @@ When you click the **Knit** button a document will be generated that includes bo
 summary(repdata.data.StormData)
 ```
 
-You can also embed plots, for example:
+Structure of repdata.data.StormData:
 
-```{r, echo=FALSE}
-plot(repdata.data.StormData)
+```{r, echo=TRUE}
+str(repdata.data.StormData)
+	tables()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
