@@ -11,7 +11,7 @@ Immediately after the title, there should be a synopsis which describes and summ
 
 ### Basic settings
 ```{r, setup}
-knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='graphs/', base.url='reports/',
+knitr::opts_chunk$set(fig.width=14, fig.height=8, fig.path='graphs/', base.url='reports/',
                       
                       echo=TRUE, warning=FALSE, message=FALSE)
 
@@ -22,26 +22,52 @@ which describes (in words and code) how the data were loaded into R and processe
 
 ProjectTemplate searches through the data directory for files. If a file has a name like NAME.EXTENSION with a recognized extension such as .csv or .sql, ProjectTemplate will automatically load the data described in that file into memory. Generally, the automatically loaded data set will end up in an R data frame called NAME that will be placed in R’s global environment. If you’re not sure if your data set will be automatically loaded by ProjectTemplate, you can check the full list of currently supported filetypes here.
 
-```{r, echo=TRUE}
+```{r, readData, echo=TRUE, cache=TRUE}
 getwd()
-
+list.files(path = "data", pattern = NULL, all.files = FALSE)
 library('ProjectTemplate')
 	load.project()
+	tables()
+	str(repdata.data.StormData)
+
+	
+
 	
 ```
 ## Results 
 in which results are presented.
+stormyYears <- stormy %>% group_by (year=(as.POSIXlt(BGN_DATE)$year+1900))
 
-```{r}
-summary(repdata.data.StormData)
-getwd()
+stormyEconImpact <- stormy[, lapply(.SD, sum, na.rm=TRUE), by=EVTYPE, .SDcols=c("PROPDMG", "CROPDMG") ]
+stormyEconImpact <- transform(stormyEconImpact, TotalDamage = PROPDMG + CROPDMG)
+stormyEconImpactS <- stormyEconImpact[order(-TotalDamage)]
+ep <- ggplot(data=stormyEconImpactS[1:10], aes(EVTYPE,TotalDamage), log="y") +
+ geom_point(aes(EVTYPE,TotalDamage), size=3, shape=2) +
+ geom_point(aes(EVTYPE,PROPDMG), size=2, shape=1) +
+ geom_point(aes(EVTYPE,CROPDMG), size=2, shape=0) +
+ theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+ep
+
+```{r, presentData}  
+tables()
+stormy <- (repdata.data.StormData)
+stormy$BGN_DATE<-as.Date(as.character(stormy$BGN_DATE),"%m/%d/%Y")
+str(stormy)		
+eventTypeF <- filter(stormy, (FATALITIES > 0 ))[,.(Fatalities = sum(FATALITIES)), by= EVTYPE]
+sortedEventTypeF <-eventTypeF[order(-Fatalities)]
+eventTypeI <- filter(stormy, (INJURIES > 0 ))[,.(Injuries = sum(INJURIES)), by= EVTYPE]
+sortedEventTypeI <-eventTypeI[order(-Injuries)]	
+fp <- qplot(EVTYPE, Fatalities, data= sortedEventTypeF[1:25], log="y")
+fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 	
+
+
 ```
 
 Structure of repdata.data.StormData:
 
-```{r, echo=TRUE}
+```{r, moreData, echo=TRUE}
 str(repdata.data.StormData)
-	tables()
+
 ```
 
