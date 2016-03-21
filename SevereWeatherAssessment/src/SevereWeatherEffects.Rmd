@@ -2,14 +2,15 @@
 title: "US Severe Weather Health and Economic Consequences"
 author: "Leila Tite"
 date: "March 15, 2016"
-output: html_document
-#        keep_md: TRUE
+output: html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    keep_md: TRUE
 ---
-```{r, echo=FALSE}
-setwd("/home/jsb191/Coursera/ReproducibleResearch/RepData_PeerAssessment2/SevereWeatherAssessment")
-library('ProjectTemplate')
-	load.project()
-```
+## Synopsis
+Immediately after the title, there should be a synopsis which describes and summarizes your analysis in at most 10 complete sentences.
+
 
 ### Basic settings
 ```{r}
@@ -18,9 +19,18 @@ knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='graphs/', base.url='
 
 ```
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## Data Processing 
+which describes (in words and code) how the data were loaded into R and processed for analysis. In particular, the analysis must start from the raw CSV file containing the data. Cannot do any preprocessing outside the document. If preprocessing is time-consuming you may consider using the cache = TRUE option for certain code chunks.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+ProjectTemplate searches through the data directory for files. If a file has a name like NAME.EXTENSION with a recognized extension such as .csv or .sql, ProjectTemplate will automatically load the data described in that file into memory. Generally, the automatically loaded data set will end up in an R data frame called NAME that will be placed in R’s global environment. If you’re not sure if your data set will be automatically loaded by ProjectTemplate, you can check the full list of currently supported filetypes here.
+
+```{r, echo=TRUE}
+setwd("/Users/leila/Coursera/DataScience/ReproducibleResearch/RepData_PeerAssessment2/SevereWeatherAssessment")
+library('ProjectTemplate')
+	load.project()
+```
+## Results 
+in which results are presented.
 
 ```{r}
 summary(repdata.data.StormData)
