@@ -15,7 +15,7 @@ Immediately after the title, there should be a synopsis which describes and summ
 
 ## Basic settings
 ```{r, setup}
-knitr::opts_chunk$set(fig.width=14, fig.height=8, fig.path='graphs/', base.url='reports/',
+knitr::opts_chunk$set(fig.width=14, fig.height=10, fig.path='graphs/', base.url='reports/',
                       
                       echo=TRUE, warning=FALSE, message=FALSE)
 
@@ -26,7 +26,7 @@ which describes (in words and code) how the data were loaded into R and processe
 
 ProjectTemplate searches through the data directory for files. If a file has a name like NAME.EXTENSION with a recognized extension such as .csv or .sql, ProjectTemplate will automatically load the data described in that file into memory. Generally, the automatically loaded data set will end up in an R data frame called NAME that will be placed in R’s global environment. If you’re not sure if your data set will be automatically loaded by ProjectTemplate, you can check the full list of currently supported filetypes here.
 
-```{r, readData, echo=TRUE, cache=TRUE}
+```{r, readData, echo=TRUE}
 getwd()
 list.files(path = "data", pattern = NULL, all.files = FALSE)
 library('ProjectTemplate')
@@ -40,7 +40,6 @@ library('ProjectTemplate')
 ```
 # Results 
 in which results are presented.
-stormyYears <- stormy %>% group_by (year=(as.POSIXlt(BGN_DATE)$year+1900))
 
 stormyEconImpact <- stormy[, lapply(.SD, sum, na.rm=TRUE), by=EVTYPE, .SDcols=c("PROPDMG", "CROPDMG") ]
 stormyEconImpact <- transform(stormyEconImpact, TotalDamage = PROPDMG + CROPDMG)
@@ -52,25 +51,33 @@ ep <- ggplot(data=stormyEconImpactS[1:10], aes(EVTYPE,TotalDamage), log="y") +
  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ep
 
-stormyHealthImpact <- stormy[,lapply(.SD,sum,na.rm=TRUE),by=EVTYPE,.SDcols=c("FATALITIES","INJURIES") ]
-stormyHealthImpactFS <- stormyHealthImpact[order(-FATALITIES)]
-
-fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y")
-fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-	
 
 ```{r, presentData}  
 
 stormy <- (repdata.data.StormData)
 stormy$BGN_DATE<-as.Date(as.character(stormy$BGN_DATE),"%m/%d/%Y")
-str(stormy)		
+stormyYears <- stormy %>% group_by (year=(as.POSIXlt(BGN_DATE)$year+1900))
+startingYear <- stormyYears$year[1]
+endingYear <- stormyYears$year[nrow(stormyYears)]
+reportRange <- paste(startingYear[1], endingYear, sep=" - ")
+fatalityRptTitle <- paste("Severe Weather Fatalities", reportRange,sep=" ")
+injuryRptTitle <- paste("Severe Weather Personal Injuries", reportRange,sep=" ")
 
 stormyHealthImpact <- stormy[,lapply(.SD,sum,na.rm=TRUE),by=EVTYPE,.SDcols=c("FATALITIES","INJURIES") ]
 stormyHealthImpactFS <- stormyHealthImpact[order(-FATALITIES)]
 
-fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y")
+fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y", main=fatalityRptTitle, xlab="Severe Weather Event Type", ylab="Number of Fatalities")
 fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
+stormyHealthImpactIS <- stormyHealthImpact[order(-INJURIES)]
+
+ip <- qplot(EVTYPE, INJURIES, data= stormyHealthImpactFS[1:25], log="y", main=injuryRptTitle, xlab="Severe Weather Event Type", ylab="Number of Injuries")
+ip + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+	
+stormyEconImpact <- stormy[, lapply(.SD, sum, na.rm=TRUE), by=EVTYPE, .SDcols=c("PROPDMG", "CROPDMG") ]
+stormyEconImpact <- transform(stormyEconImpact, TotalDamage = PROPDMG + CROPDMG)
+stormyEconImpactS <- stormyEconImpact[order(-TotalDamage)]
+head(stormyEconImpactS)
 ```
 
 Structure of repdata.data.StormData:
