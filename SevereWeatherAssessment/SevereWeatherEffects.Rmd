@@ -2,14 +2,18 @@
 title: "US Severe Weather Health and Economic Consequences"
 author: "Leila Tite"
 date: "March 15, 2016"
-output: html_document
-
+output: 
+  html_document: 
+    fig_caption: yes
+    keep_md: yes
+    number_sections: yes
+    toc: yes
 ---
-## Synopsis
+# Synopsis
 Immediately after the title, there should be a synopsis which describes and summarizes your analysis in at most 10 complete sentences.
 
 
-### Basic settings
+## Basic settings
 ```{r, setup}
 knitr::opts_chunk$set(fig.width=14, fig.height=8, fig.path='graphs/', base.url='reports/',
                       
@@ -17,7 +21,7 @@ knitr::opts_chunk$set(fig.width=14, fig.height=8, fig.path='graphs/', base.url='
 
 ```
 
-## Data Processing 
+# Data Processing 
 which describes (in words and code) how the data were loaded into R and processed for analysis. In particular, the analysis must start from the raw CSV file containing the data. Cannot do any preprocessing outside the document. If preprocessing is time-consuming you may consider using the cache = TRUE option for certain code chunks.
 
 ProjectTemplate searches through the data directory for files. If a file has a name like NAME.EXTENSION with a recognized extension such as .csv or .sql, ProjectTemplate will automatically load the data described in that file into memory. Generally, the automatically loaded data set will end up in an R data frame called NAME that will be placed in R’s global environment. If you’re not sure if your data set will be automatically loaded by ProjectTemplate, you can check the full list of currently supported filetypes here.
@@ -34,7 +38,7 @@ library('ProjectTemplate')
 
 	
 ```
-## Results 
+# Results 
 in which results are presented.
 stormyYears <- stormy %>% group_by (year=(as.POSIXlt(BGN_DATE)$year+1900))
 
@@ -48,19 +52,24 @@ ep <- ggplot(data=stormyEconImpactS[1:10], aes(EVTYPE,TotalDamage), log="y") +
  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ep
 
-```{r, presentData}  
-tables()
-stormy <- (repdata.data.StormData)
-stormy$BGN_DATE<-as.Date(as.character(stormy$BGN_DATE),"%m/%d/%Y")
-str(stormy)		
-eventTypeF <- filter(stormy, (FATALITIES > 0 ))[,.(Fatalities = sum(FATALITIES)), by= EVTYPE]
-sortedEventTypeF <-eventTypeF[order(-Fatalities)]
-eventTypeI <- filter(stormy, (INJURIES > 0 ))[,.(Injuries = sum(INJURIES)), by= EVTYPE]
-sortedEventTypeI <-eventTypeI[order(-Injuries)]	
-fp <- qplot(EVTYPE, Fatalities, data= sortedEventTypeF[1:25], log="y")
+stormyHealthImpact <- stormy[,lapply(.SD,sum,na.rm=TRUE),by=EVTYPE,.SDcols=c("FATALITIES","INJURIES") ]
+stormyHealthImpactFS <- stormyHealthImpact[order(-FATALITIES)]
+
+fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y")
 fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 	
 
+```{r, presentData}  
+
+stormy <- (repdata.data.StormData)
+stormy$BGN_DATE<-as.Date(as.character(stormy$BGN_DATE),"%m/%d/%Y")
+str(stormy)		
+
+stormyHealthImpact <- stormy[,lapply(.SD,sum,na.rm=TRUE),by=EVTYPE,.SDcols=c("FATALITIES","INJURIES") ]
+stormyHealthImpactFS <- stormyHealthImpact[order(-FATALITIES)]
+
+fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y")
+fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
 ```
 
