@@ -1,0 +1,6 @@
+* add more axis.label.y ticks or somehow better indicate scale
+   scale_y_continuous(breaks = c(200,500,1000,2000,5500)) +
+* melt economic impact table (sounds ominous). Make it LONG instead of WIDE.
+
+ re-order Legend for DamageType
+ Change x label, y label, add a title

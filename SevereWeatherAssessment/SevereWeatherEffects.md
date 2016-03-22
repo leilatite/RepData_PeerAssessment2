@@ -100,15 +100,6 @@ library('ProjectTemplate')
 # Results 
 in which results are presented.
 
-stormyEconImpact <- stormy[, lapply(.SD, sum, na.rm=TRUE), by=EVTYPE, .SDcols=c("PROPDMG", "CROPDMG") ]
-stormyEconImpact <- transform(stormyEconImpact, TotalDamage = PROPDMG + CROPDMG)
-stormyEconImpactS <- stormyEconImpact[order(-TotalDamage)]
-ep <- ggplot(data=stormyEconImpactS[1:10], aes(EVTYPE,TotalDamage), log="y") +
- geom_point(aes(EVTYPE,TotalDamage), size=3, shape=2) +
- geom_point(aes(EVTYPE,PROPDMG), size=2, shape=1) +
- geom_point(aes(EVTYPE,CROPDMG), size=2, shape=0) +
- theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
-ep
 
 
 
@@ -125,8 +116,8 @@ injuryRptTitle <- paste("Severe Weather Personal Injuries", reportRange,sep=" ")
 stormyHealthImpact <- stormy[,lapply(.SD,sum,na.rm=TRUE),by=EVTYPE,.SDcols=c("FATALITIES","INJURIES") ]
 stormyHealthImpactFS <- stormyHealthImpact[order(-FATALITIES)]
 
-fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y", main=fatalityRptTitle, xlab="Severe Weather Event Type", ylab="Number of Fatalities")
-fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y", main=fatalityRptTitle, xlab="Severe Weather Event Type", ylab="Number of Fatalities") 
+fp +  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
 ![](graphs/fatalitiesEventType-1.png)<!-- -->
@@ -134,8 +125,8 @@ fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```r
 stormyHealthImpactIS <- stormyHealthImpact[order(-INJURIES)]
 
-ip <- qplot(EVTYPE, INJURIES, data= stormyHealthImpactFS[1:25], log="y", main=injuryRptTitle, xlab="Severe Weather Event Type", ylab="Number of Injuries")
-ip + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+ip <- qplot(EVTYPE, INJURIES, data= stormyHealthImpactFS[1:25], log="y", main=injuryRptTitle, xlab="Severe Weather Event Type", ylab="Number of Injuries") 
+ip +  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
 ![](graphs/injuriesEventType-1.png)<!-- -->
@@ -145,18 +136,15 @@ ip + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 stormyEconImpact <- stormy[, lapply(.SD, sum, na.rm=TRUE), by=EVTYPE, .SDcols=c("PROPDMG", "CROPDMG") ]
 stormyEconImpact <- transform(stormyEconImpact, TotalDamage = PROPDMG + CROPDMG)
 stormyEconImpactS <- stormyEconImpact[order(-TotalDamage)]
-head(stormyEconImpactS)
+stormyEconL <- melt(stormyEconImpactS[1:10], id.vars = c("EVTYPE"), variable.name = "DamageType", value.name = "DamageValue")
+ep <- ggplot(data=stormyEconL, aes(x=EVTYPE,y=DamageValue), log="y") +
+  geom_point(aes(colour=DamageType, shape=DamageType, group=DamageType), size=3) +
+  scale_y_continuous(breaks = scales::pretty_breaks(n = 10), labels = scales::dollar) +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))  
+ep
 ```
 
-```
-##               EVTYPE   PROPDMG   CROPDMG TotalDamage
-## 1:           TORNADO 3212258.2 100018.52   3312276.7
-## 2:       FLASH FLOOD 1420124.6 179200.46   1599325.1
-## 3:         TSTM WIND 1335965.6 109202.60   1445168.2
-## 4:              HAIL  688693.4 579596.28   1268289.7
-## 5:             FLOOD  899938.5 168037.88   1067976.4
-## 6: THUNDERSTORM WIND  876844.2  66791.45    943635.6
-```
+![](graphs/economicEventType-1.png)<!-- -->
 
 Structure of repdata.data.StormData:
 
