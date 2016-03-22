@@ -52,7 +52,7 @@ ep <- ggplot(data=stormyEconImpactS[1:10], aes(EVTYPE,TotalDamage), log="y") +
 ep
 
 
-```{r, presentData}  
+```{r, fatalitiesEventType}  
 
 stormy <- (repdata.data.StormData)
 stormy$BGN_DATE<-as.Date(as.character(stormy$BGN_DATE),"%m/%d/%Y")
@@ -69,10 +69,16 @@ stormyHealthImpactFS <- stormyHealthImpact[order(-FATALITIES)]
 fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y", main=fatalityRptTitle, xlab="Severe Weather Event Type", ylab="Number of Fatalities")
 fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 
+```
+```{r, injuriesEventType}  
+
 stormyHealthImpactIS <- stormyHealthImpact[order(-INJURIES)]
 
 ip <- qplot(EVTYPE, INJURIES, data= stormyHealthImpactFS[1:25], log="y", main=injuryRptTitle, xlab="Severe Weather Event Type", ylab="Number of Injuries")
 ip + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
+```
+
+```{r, economicEventType}  
 	
 stormyEconImpact <- stormy[, lapply(.SD, sum, na.rm=TRUE), by=EVTYPE, .SDcols=c("PROPDMG", "CROPDMG") ]
 stormyEconImpact <- transform(stormyEconImpact, TotalDamage = PROPDMG + CROPDMG)

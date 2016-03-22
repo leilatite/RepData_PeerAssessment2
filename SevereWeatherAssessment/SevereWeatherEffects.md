@@ -129,7 +129,7 @@ fp <- qplot(EVTYPE, FATALITIES, data= stormyHealthImpactFS[1:25], log="y", main=
 fp + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
-![](graphs/presentData-1.png)<!-- -->
+![](graphs/fatalitiesEventType-1.png)<!-- -->
 
 ```r
 stormyHealthImpactIS <- stormyHealthImpact[order(-INJURIES)]
@@ -138,7 +138,8 @@ ip <- qplot(EVTYPE, INJURIES, data= stormyHealthImpactFS[1:25], log="y", main=in
 ip + theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1))
 ```
 
-![](graphs/presentData-2.png)<!-- -->
+![](graphs/injuriesEventType-1.png)<!-- -->
+
 
 ```r
 stormyEconImpact <- stormy[, lapply(.SD, sum, na.rm=TRUE), by=EVTYPE, .SDcols=c("PROPDMG", "CROPDMG") ]
